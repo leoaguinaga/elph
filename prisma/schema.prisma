@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Better-Auth required tables ──────────────────────────────────────────────
+
+model user {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      session[]
+  accounts      account[]
+
+  workoutPlans   WorkoutPlan[]
+  exercises      Exercise[]
+  sessions2      WorkoutSession[]
+  weightEntries  WeightEntry[]
+  preferences    UserPreferences?
+  achievements   Achievement[]
+}
+
+model session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  token     String   @unique
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([accountId, providerId])
+}
+
+model verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── App domain tables ─────────────────────────────────────────────────────────
+
+model WorkoutPlan {
+  id        String       @id @default(cuid())
+  name      String
+  goal      String       @default("Hipertrofia")
+  isActive  Boolean      @default(false)
+  userId    String
+  user      user         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  days      WorkoutDay[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([userId, isActive])
+}
+
+model WorkoutDay {
+  id          String           @id @default(cuid())
+  dayName     String
+  sessionName String
+  isRest      Boolean          @default(false)
+  order       Int              @default(0)
+  planId      String
+  plan        WorkoutPlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  exercises   DayExercise[]
+  sessions    WorkoutSession[]
+}
+
+model Exercise {
+  id           String        @id @default(cuid())
+  name         String
+  muscle       String
+  equipment    String
+  // userId null = system/shared exercise (catálogo); userId set = custom del usuario
+  userId       String?
+  user         user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dayExercises DayExercise[]
+  setRecords   SetRecord[]
+  createdAt    DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model DayExercise {
+  id          String     @id @default(cuid())
+  order       Int        @default(0)
+  targetSets  Int        @default(3)
+  targetReps  String     @default("8-10")
+  restSeconds Int        @default(90)
+  exerciseId  String
+  exercise    Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  dayId       String
+  day         WorkoutDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutSession {
+  id         String      @id @default(cuid())
+  userId     String
+  user       user        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dayId      String?
+  day        WorkoutDay? @relation(fields: [dayId], references: [id])
+  notes      String?
+  startedAt  DateTime    @default(now())
+  finishedAt DateTime?
+  sets       SetRecord[]
+
+  @@index([userId, startedAt])
+}
+
+model SetRecord {
+  id         String         @id @default(cuid())
+  setNumber  Int
+  weight     Float          @default(0)
+  reps       Int            @default(0)
+  rpe        Float?
+  done       Boolean        @default(true)
+  sessionId  String
+  session    WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  createdAt  DateTime       @default(now())
+
+  @@unique([sessionId, exerciseId, setNumber])
+  @@index([exerciseId])
+}
+
+model WeightEntry {
+  id     String   @id @default(cuid())
+  weight Float
+  userId String
+  user   user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date   DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+// ─── Profile / preferences / gamification ─────────────────────────────────────
+
+model UserPreferences {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  units              String   @default("kg")        // "kg" | "lb"
+  defaultRestSeconds Int      @default(90)
+  notifications      Boolean  @default(true)
+  theme              String   @default("dark")      // "dark" | "light" | "system"
+  language           String   @default("es")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Achievement {
+  id         String   @id @default(cuid())
+  userId     String
+  user       user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String   // "PR" | "Streak" | "Milestone"
+  title      String
+  subtitle   String?
+  achievedAt DateTime @default(now())
+
+  @@index([userId, achievedAt])
+}
+
+model Tip {
+  id        String   @id @default(cuid())
+  content   String
+  muscle    String?
+  category  String?
+  createdAt DateTime @default(now())
+}
