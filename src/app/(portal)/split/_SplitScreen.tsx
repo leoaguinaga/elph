@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import type { SplitDaySummary } from "@/server/db/plans";
 import { NewPlanModal } from "./_components/NewPlanModal";
 import { DayDetailModal } from "./_components/DayDetailModal";
-
 import { EditPlanModal } from "./_components/EditPlanModal";
+import { updatePlanInfo } from "@/server/actions/plans";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Plan = {
   id: string;
@@ -27,6 +34,10 @@ export function SplitScreen({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [name, setName] = useState(plan?.name || "");
+  const [isPending, startTransition] = useTransition();
 
   if (!plan) {
     return (
@@ -50,26 +61,76 @@ export function SplitScreen({
     month: "long",
   });
 
+  const handleSaveName = () => {
+    if (!name.trim() || name.trim() === plan.name) {
+      setIsEditingName(false);
+      setName(plan.name);
+      return;
+    }
+    startTransition(async () => {
+      await updatePlanInfo(plan.id, name, plan.goal);
+      setIsEditingName(false);
+    });
+  };
+
+  const handleGoalChange = (newGoal: string | null) => {
+    if (!newGoal || newGoal === plan.goal) return;
+    startTransition(async () => {
+      await updatePlanInfo(plan.id, plan.name, newGoal);
+    });
+  };
+
   return (
-    <main className="max-w-7xl mx-auto px-12 pt-8 pb-24">
-      <div className="flex items-end justify-between mb-8">
-        <div>
-          <div className="meta mb-2">Mi rutina actual</div>
-          <h1 className="text-[28px] font-semibold tracking-[-0.02em] m-0 text-t1">
-            {plan.name}
-          </h1>
-          <div className="body mt-2 text-sm">
-            {plan.goal} · Semana {weeksSinceStart} · Iniciada el {startedAt}
+    <main className="max-w-7xl mx-auto px-6 md:px-12 pt-8 pb-24">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+        <div className="flex-1">
+          <div className="text-muted-foreground text-sm mb-2">Mi programación actual</div>
+          {isEditingName ? (
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={handleSaveName}
+              onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+              className="text-[28px] font-semibold bg-bg text-t1 border border-border focus:outline-none focus:border-none focus:underline underline-offset-6 w-full max-w-md"
+              autoFocus
+            />
+          ) : (
+            <h1
+              onClick={() => setIsEditingName(true)}
+              className="text-[28px] font-semibold m-0 text-t1 cursor-pointer hover:opacity-85 border-t3/50 hover:border-accent w-fit transition-all"
+              title="Haz clic para editar nombre"
+            >
+              {plan.name}
+            </h1>
+          )}
+          <div className="flex items-center gap-2 mt-3 flex-wrap text-sm text-t2">
+            <span className="text-xs font-semibold text-t3 uppercase tracking-wider">OBJETIVO:</span>
+            <Select value={plan.goal} onValueChange={handleGoalChange}>
+              <SelectTrigger className="inline-flex h-8 items-center border border-border bg-input/20 px-2.5 rounded-lg text-xs font-semibold text-accent hover:bg-input/40 transition-colors">
+                <SelectValue placeholder="Selecciona objetivo" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#1C1F26] border border-border text-t1">
+                <SelectItem value="Ganar masa muscular">Ganar masa muscular</SelectItem>
+                <SelectItem value="Aumentar la fuerza">Aumentar la fuerza</SelectItem>
+                <SelectItem value="Disminuir de peso">Disminuir de peso</SelectItem>
+                <SelectItem value="Aumentar de peso">Aumentar de peso</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-t3">·</span>
+            <span>Semana {weeksSinceStart}</span>
+            <span className="text-t3">·</span>
+            <span>Iniciada el {startedAt}</span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-shrink-0">
           <button onClick={() => plan ? setIsEditOpen(true) : setIsModalOpen(true)} className="btn-primary">
             {plan ? "Editar rutina" : "Nueva rutina"}
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {plan.days.map((d, i) => (
           <DayCard
             key={d.id}

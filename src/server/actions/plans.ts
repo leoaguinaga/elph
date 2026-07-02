@@ -309,4 +309,24 @@ export async function saveSplitChanges(input: {
   revalidatePath("/dashboard");
 }
 
+export async function updatePlanInfo(planId: string, name: string, goal: string) {
+  const userId = await requireUserId();
+  const plan = await prisma.workoutPlan.findUnique({
+    where: { id: planId },
+  });
+  if (!plan || plan.userId !== userId) throw new Error("Sin permisos");
+
+  const updated = await prisma.workoutPlan.update({
+    where: { id: planId },
+    data: {
+      name: name.trim(),
+      goal: goal.trim(),
+    },
+  });
+
+  revalidatePath("/split");
+  revalidatePath("/dashboard");
+  return updated;
+}
+
 

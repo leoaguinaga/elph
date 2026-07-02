@@ -105,7 +105,7 @@ interface NewPlanModalProps {
 export function NewPlanModal({ isOpen, onClose }: NewPlanModalProps) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
-  const [goal, setGoal] = useState("Hipertrofia");
+  const [goal, setGoal] = useState("Ganar masa muscular");
   const [selectedTemplateId, setSelectedTemplateId] = useState("ppl_3");
   const [days, setDays] = useState<TemplateDay[]>(TEMPLATES[0].days);
   const [pending, startTransition] = useTransition();
@@ -164,7 +164,7 @@ export function NewPlanModal({ isOpen, onClose }: NewPlanModalProps) {
         // Reset states
         setStep(1);
         setName("");
-        setGoal("Hipertrofia");
+        setGoal("Ganar masa muscular");
         setSelectedTemplateId("ppl_3");
         setDays(TEMPLATES[0].days);
       } catch (err) {
@@ -250,17 +250,17 @@ export function NewPlanModal({ isOpen, onClose }: NewPlanModalProps) {
                     <SelectValue placeholder="Selecciona un objetivo" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1C1F26] border border-border text-t1">
-                    <SelectItem value="Hipertrofia" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
-                      Hipertrofia (Ganancia muscular)
+                    <SelectItem value="Ganar masa muscular" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
+                      Ganar masa muscular
                     </SelectItem>
-                    <SelectItem value="Fuerza" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
-                      Fuerza (Powerlifting / Básicos)
+                    <SelectItem value="Aumentar la fuerza" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
+                      Aumentar la fuerza
                     </SelectItem>
-                    <SelectItem value="Pérdida de Grasa" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
-                      Pérdida de Grasa (Déficit / Acondicionamiento)
+                    <SelectItem value="Disminuir de peso" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
+                      Disminuir de peso
                     </SelectItem>
-                    <SelectItem value="Resistencia" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
-                      Resistencia / Salud General
+                    <SelectItem value="Aumentar de peso" className="hover:bg-accent/10 focus:bg-accent focus:text-white">
+                      Aumentar de peso
                     </SelectItem>
                   </SelectContent>
                 </Select>

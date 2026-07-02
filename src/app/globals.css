@@ -112,17 +112,10 @@ input, textarea { font-family: inherit; }
   border-radius: 6px;
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 12px 22px;
-  border-radius: 8px;
-  transition: background .15s ease;
-  display: inline-flex;
-  align-items: center;
+.btn-primary { 
+  @apply bg-accent text-white font-medium text-sm rounded-lg px-4 py-2 flex items-center gap-1
 }
+
 .btn-primary:hover    { background: #6E9CF3; }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 

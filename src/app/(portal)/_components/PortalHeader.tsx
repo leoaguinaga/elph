@@ -17,13 +17,13 @@ export function PortalHeader() {
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-50 bg-[rgba(17,19,24,0.9)] backdrop-blur-[10px] border-b border-border">
-      <div className="max-w-[1280px] mx-auto px-12 h-16 flex items-center justify-between">
-        <span className="text-xl font-extrabold tracking-[-0.01em] text-t1">
+    <header className="sticky top-0 z-50 bg-[rgba(17,19,24,0.9)] backdrop-blur-[10px] border-b border-border w-full">
+      <div className="w-full max-w-[1280px] mx-auto px-4 md:px-12 h-16 flex items-center justify-between gap-4">
+        <span className="text-xl font-extrabold tracking-[-0.02em] text-t1 flex-shrink-0">
           Elph
         </span>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5 md:gap-1 overflow-x-auto md:overflow-visible scrollbar-none -mr-4 pr-4 md:mr-0 md:pr-0">
           {NAV_ITEMS.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -33,9 +33,9 @@ export function PortalHeader() {
                 key={item.href}
                 href={item.href}
                 className={[
-                  "text-sm px-3.5 py-2 rounded-lg transition-colors duration-150",
+                  "text-xs md:text-sm px-2.5 md:px-3.5 py-1.5 md:py-2 rounded-lg transition-colors duration-150 flex-shrink-0",
                   isActive
-                    ? "font-medium text-t1"
+                    ? "font-medium text-t1 bg-surface-2/65"
                     : "font-normal text-t2 hover:text-t1",
                 ].join(" ")}
               >

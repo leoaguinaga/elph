@@ -75,8 +75,8 @@ export function HomeScreen({ userName, dashboard }: HomeScreenProps) {
   };
 
   return (
-    <main className="max-w-[1280px] mx-auto px-12 pt-8 pb-24">
-      <div className="grid gap-10 items-start" style={{ gridTemplateColumns: "minmax(0, 1.45fr) minmax(0, 1fr)" }}>
+    <main className="w-full max-w-7xl mx-auto px-4 md:px-12 pt-6 md:pt-8 pb-16 md:pb-24">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-8 lg:gap-10 items-start">
 
         {/* ── Left column ─────────────────────────────────────────────────── */}
         <div>
@@ -107,7 +107,7 @@ export function HomeScreen({ userName, dashboard }: HomeScreenProps) {
                     ? "Día de descanso — aprovecha para recuperarte."
                     : "Sin ejercicios programados para hoy."}
               </div>
-              <Link href="/split" className="link-accent text-[13px]">Ver mi rutina →</Link>
+              <Link href="/split" className="link-accent text-[13px]">Ver mi rutina</Link>
             </div>
           )}
 
@@ -117,7 +117,7 @@ export function HomeScreen({ userName, dashboard }: HomeScreenProps) {
               <div className="label-section">Esta semana</div>
               <div className="meta num">Semana {weekNumber}</div>
             </div>
-            <div className="flex gap-3.5 mb-3.5">
+            <div className="flex flex-wrap gap-2 md:gap-3.5 mb-3.5">
               {weekStrip.map((d, i) => {
                 const filled = d.isTraining && d.done;
                 return (
@@ -315,7 +315,7 @@ function TodayCard({
           onClick={hasActiveSession || running ? onContinue : onStart}
           className="btn-primary gap-2"
         >
-          <Icon name={hasActiveSession || running ? "arrow" : "play"} size={14} color="#fff" />
+          {/* <Icon name={hasActiveSession || running ? "arrow" : "play"} size={14} color="#fff" /> */}
           {hasActiveSession || running ? "Continuar sesión" : "Iniciar sesión"}
         </Link>
         <Link href="/split" className="link-accent p-0 text-[13px]">Ver rutina completa →</Link>

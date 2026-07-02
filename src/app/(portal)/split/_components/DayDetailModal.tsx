@@ -73,8 +73,13 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
 
   // Calculate stats
   const totalExercises = details?.exercises.length || 0;
-  const totalSets = details?.exercises.reduce((sum, e) => sum + e.targetSets, 0) || 0;
-  const totalSeconds = details?.exercises.reduce((sum, e) => sum + e.targetSets * (e.restSeconds + 30), 0) || 0;
+  const totalSets =
+    details?.exercises.reduce((sum, e) => sum + e.targetSets, 0) || 0;
+  const totalSeconds =
+    details?.exercises.reduce(
+      (sum, e) => sum + e.targetSets * (e.restSeconds + 30),
+      0,
+    ) || 0;
   const estimatedMin = Math.round(totalSeconds / 60) || 0;
 
   return (
@@ -89,7 +94,9 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 space-y-4">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-t2 font-medium">Cargando detalles de rutina...</span>
+            <span className="text-sm text-t2 font-medium">
+              Cargando detalles de rutina...
+            </span>
           </div>
         ) : error ? (
           <div className="py-12 text-center">
@@ -119,19 +126,26 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
                   type="button"
                   onClick={handleStartSession}
                   disabled={pendingStart || totalExercises === 0}
-                  className="bg-[#5B8EF0] hover:bg-[#6E9CF3] text-white text-[13px] font-semibold py-2 px-4 rounded-lg flex items-center gap-2 shadow-lg shadow-accent/15 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary"
                 >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
                   {pendingStart ? "Iniciando..." : "Iniciar sesión"}
                 </button>
                 <button
                   onClick={onClose}
                   className="bg-[#23272F]/50 hover:bg-[#23272F] text-t2 hover:text-t1 p-2.5 rounded-lg border border-white/5 transition-all"
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -152,24 +166,30 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
             )}
 
             {/* Bento Grid Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="bg-[#1C1F26]/75 border border-white/5 rounded-xl p-5">
                 <span className="block text-[11px] font-bold text-t3 tracking-wider uppercase mb-1">
                   EJERCICIOS
                 </span>
-                <span className="text-3xl font-extrabold text-t1 num">{totalExercises}</span>
+                <span className="text-3xl font-extrabold text-t1 num">
+                  {totalExercises}
+                </span>
               </div>
               <div className="bg-[#1C1F26]/75 border border-white/5 rounded-xl p-5">
                 <span className="block text-[11px] font-bold text-t3 tracking-wider uppercase mb-1">
                   SERIES TOTALES
                 </span>
-                <span className="text-3xl font-extrabold text-t1 num">{totalSets}</span>
+                <span className="text-3xl font-extrabold text-t1 num">
+                  {totalSets}
+                </span>
               </div>
               <div className="bg-[#1C1F26]/75 border border-white/5 rounded-xl p-5">
                 <span className="block text-[11px] font-bold text-t3 tracking-wider uppercase mb-1">
                   TIEMPO ESTIMADO
                 </span>
-                <span className="text-3xl font-extrabold text-t1 num">~{estimatedMin} min</span>
+                <span className="text-3xl font-extrabold text-t1 num">
+                  ~{estimatedMin} min
+                </span>
               </div>
             </div>
 
@@ -188,7 +208,7 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
               <h3 className="text-xs font-bold text-t2 tracking-widest uppercase mb-3">
                 LISTA DE EJERCICIOS
               </h3>
-              <div className="bg-[#1C1F26]/30 border border-white/5 rounded-xl overflow-hidden">
+              <div className="bg-[#1C1F26]/30 border border-white/5 rounded-xl overflow-x-auto scrollbar-none">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-[#2C303A]/50 bg-[#1C1F26]/50 text-t3 font-bold uppercase tracking-wider">
@@ -210,11 +230,12 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
                         </td>
                         <td className="py-4 px-4 font-semibold text-t1">
                           <div>{e.name}</div>
-                          {index === 0 && e.name.toLowerCase().includes("banca") && (
-                            <span className="text-[10px] text-t3 font-normal mt-0.5 block">
-                              Calentar con 50% x 8
-                            </span>
-                          )}
+                          {index === 0 &&
+                            e.name.toLowerCase().includes("banca") && (
+                              <span className="text-[10px] text-t3 font-normal mt-0.5 block">
+                                Calentar con 50% x 8
+                              </span>
+                            )}
                         </td>
                         <td className="py-4 px-4 text-center font-bold text-t1 num">
                           {e.targetSets}
@@ -229,7 +250,10 @@ export function DayDetailModal({ dayId, onClose }: DayDetailModalProps) {
                     ))}
                     {totalExercises === 0 && (
                       <tr>
-                        <td colSpan={5} className="py-8 text-center text-t3 italic">
+                        <td
+                          colSpan={5}
+                          className="py-8 text-center text-t3 italic"
+                        >
                           No hay ejercicios asignados a este día.
                         </td>
                       </tr>

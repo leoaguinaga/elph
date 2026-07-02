@@ -292,65 +292,67 @@ export function EditPlanModal({ planId, isOpen, onClose }: EditPlanModalProps) {
         ) : plan ? (
           <>
             {/* Header */}
-            <div className="flex justify-between items-center px-8 py-5 border-b border-border bg-[#1C1F26]/30">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 md:px-8 py-4 md:py-5 border-b border-border bg-[#1C1F26]/30">
               <div>
                 <span className="label-eyebrow text-t3 text-[10px] tracking-widest">
                   EDITOR DE RUTINA
                 </span>
-                <h2 className="text-xl font-bold text-t1 mt-0.5 tracking-tight">
+                <h2 className="text-lg md:text-xl font-bold text-t1 mt-0.5 tracking-tight truncate max-w-[280px] sm:max-w-none">
                   {plan.name}
                 </h2>
               </div>
-              <div className="flex items-center gap-4">
-                {error && <span className="text-xs text-warn">{error}</span>}
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="btn-ghost text-xs py-2 px-4 text-t2 hover:text-t1"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={pendingSave}
-                  className="bg-[#5B8EF0] hover:bg-[#6E9CF3] text-white text-xs font-semibold py-2 px-5 rounded-lg transition-all"
-                >
-                  {pendingSave ? "Guardando..." : "Guardar cambios"}
-                </button>
-                <button
-                  onClick={onClose}
-                  className="bg-[#23272F]/50 hover:bg-[#23272F] text-t2 hover:text-t1 p-2 rounded-lg border border-white/5 transition-all"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+              <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                {error && <span className="text-xs text-warn truncate max-w-[150px]">{error}</span>}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="btn-ghost text-[11px] md:text-xs py-1.5 md:py-2 px-3 md:px-4 text-t2 hover:text-t1"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={pendingSave}
+                    className="bg-[#5B8EF0] hover:bg-[#6E9CF3] text-white text-[11px] md:text-xs font-semibold py-1.5 md:py-2 px-4 md:px-5 rounded-lg transition-all"
+                  >
+                    {pendingSave ? "Guardando..." : "Guardar"}
+                  </button>
+                  <button
+                    onClick={onClose}
+                    className="bg-[#23272F]/50 hover:bg-[#23272F] text-t2 hover:text-t1 p-2 rounded-lg border border-white/5 transition-all"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Content body split */}
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
               {/* Sidebar: Days */}
-              <div className="w-[240px] border-r border-border bg-[#16181F]/40 p-4 overflow-y-auto">
-                <span className="block label-section text-[11px] text-t3 mb-3">DÍAS</span>
-                <div className="space-y-1.5">
+              <div className="w-full md:w-[240px] border-b md:border-b-0 md:border-r border-border bg-[#16181F]/40 p-3 md:p-4 overflow-x-auto md:overflow-y-auto scrollbar-none flex-shrink-0">
+                <span className="hidden md:block label-section text-[11px] text-t3 mb-3">DÍAS</span>
+                <div className="flex flex-row md:flex-col gap-1.5 flex-nowrap md:space-y-0">
                   {plan.days.map((d, idx) => {
                     const isSelected = idx === selectedDayIdx;
                     return (
                       <button
                         key={d.id}
                         onClick={() => setSelectedDayIdx(idx)}
-                        className={`w-full text-left p-3 rounded-lg border transition-all flex flex-col gap-0.5 ${
+                        className={`text-left p-2.5 md:p-3 rounded-lg border transition-all flex flex-row md:flex-col items-center md:items-start gap-2 md:gap-0.5 flex-shrink-0 ${
                           isSelected
                             ? "bg-[#1F232B] border-accent/40 text-t1 shadow-sm"
                             : "border-transparent bg-transparent text-t2 hover:bg-[#1C1F26]/30 hover:text-t1"
                         }`}
                       >
-                        <span className="text-[10px] uppercase font-bold text-t3">
+                        <span className="text-[10px] uppercase font-bold text-t3 flex-shrink-0">
                           {d.dayName}
                         </span>
-                        <span className={`text-[13px] font-semibold truncate ${isSelected ? "text-[#5B8EF0]" : "text-t2"}`}>
+                        <span className={`text-[12px] md:text-[13px] font-semibold truncate max-w-[120px] md:max-w-none ${isSelected ? "text-[#5B8EF0]" : "text-t2"}`}>
                           {d.isRest ? "Descanso" : d.sessionName}
                         </span>
                       </button>
@@ -360,7 +362,7 @@ export function EditPlanModal({ planId, isOpen, onClose }: EditPlanModalProps) {
               </div>
 
               {/* Main Panel: Day Configuration */}
-              <div className="flex-1 p-8 overflow-y-auto flex flex-col gap-6">
+              <div className="flex-1 p-4 md:p-8 overflow-y-auto flex flex-col gap-6">
                 {currentDay && (
                   <>
                     {/* Day settings */}
@@ -405,7 +407,7 @@ export function EditPlanModal({ planId, isOpen, onClose }: EditPlanModalProps) {
                           <h3 className="label-section text-[10px] text-t3 uppercase mb-3">
                             EJERCICIOS ({currentDay.exercises.length})
                           </h3>
-                          <div className="space-y-2">
+                          <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 scrollbar-none">
                             {currentDay.exercises.map((e, eIdx) => (
                               <div
                                 key={e.id}
